@@ -1,0 +1,39 @@
+<div class="login-container">
+    <div class="page-title-wrapper">
+        <h1 class="page-title">
+            <span class="base" data-ui-id="page-title-wrapper"><?= /* @noEscape */ __("Seller Login"); ?></span>
+        </h1>
+    </div>
+    <div class="block-content" aria-labelledby="block-customer-login-heading">
+        <form method="post" action="<?= /* @noEscape */ $block->getUrl('customer/account/loginPost'); ?>" id="wk-supplier-login-form" enctype="multipart/form-data" data-mage-init='{"validation":{}}'>
+            <fieldset class="fieldset login" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
+                <input type="hidden" name="supplier_login" value="1">
+                <?= /* @noEscape */ $block->getBlockHtml('formkey') ?>
+                <div class="field required">
+                    <label class="label" for="supplier-email"><span><?= /* @noEscape */ __("Email Address"); ?></span></label>
+                    <div class="control">
+                        <input type="email" data-validate="{required:true, 'validate-email':true}" class="input-text required-entry" title="<?= /* @noEscape */ __("Email Address"); ?>" id="supplier-email" name="login[username]">
+                    </div>
+                </div>
+                <div class="field email required">
+                    <label for="supplier-password" class="label"><span><?= /* @noEscape */ __("Password"); ?></span></label>
+                    <div class="control">
+                        <input type="password" data-validate="{required:true}" title="<?= /* @noEscape */ __("Password"); ?>" class="input-text required-entry" id="supplier-password" name="login[password]">
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button id="login" class="action login primary" type="submit">
+                            <span><?= /* @noEscape */ __("Sign In"); ?></span>
+                        </button>
+                    </div>
+                    <div class="secondary wk-secondary">
+                        <a class="action remind" href="<?= /* @noEscape */ $block->getUrl('sellerregistration/index/index', ["_secure" => $block->getRequest()->isSecure()]) ?>" target="blank">
+                            <span><?= /* @noEscape */ $block->escapeHtml(__("Don't have account? Click here to register as Supplier")) ?></span>
+                        </a>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

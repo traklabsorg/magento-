@@ -1,0 +1,132 @@
+<?php
+namespace Webepower\SellerRegistration\Plugin\Customer;
+
+use Magento\Framework\App\Action\Context;
+use Magento\Customer\Api\AccountManagementInterface;
+use Magento\Customer\Model\Session;
+use Magento\Framework\Data\Form\FormKey\Validator;
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\App\Response\Http as ResponseHttp;
+use Webkul\Marketplace\Helper\Data;
+
+class LoginPost
+{
+    /**
+     * @var Session
+     */
+    protected $session;
+
+    /** @var Validator */
+    protected $formKeyValidator;
+
+    /** @var CustomerRepositoryInterface */
+    protected $customerRepositoryInterface;
+
+    /** @var ManagerInterface **/
+    protected $messageManager;
+
+    /** @var Http **/
+    protected $responseHttp;
+
+    protected $currentCustomer;
+
+    /** @var AccountManagementInterface */
+    protected $customerAccountManagement;
+
+    /**
+     * @param \Magento\Framework\App\Action\Context
+     */
+    private $context;
+
+    /**
+     * @param \Webkul\Marketplace\Helper\Data
+     */
+    private $mpHelper;
+
+    public function __construct(
+        Context $context,
+        Session $customerSession,
+        Validator $formKeyValidator,
+        CustomerRepositoryInterface $customerRepositoryInterface,
+        ManagerInterface $messageManager,
+        ResponseHttp $responseHttp,
+        AccountManagementInterface $customerAccountManagement,
+        Data $mpHelper
+    ) {
+        $this->session = $customerSession;
+        $this->formKeyValidator = $formKeyValidator;
+        $this->customerRepositoryInterface = $customerRepositoryInterface;
+        $this->messageManager = $messageManager;
+        $this->responseHttp = $responseHttp;
+        $this->customerAccountManagement = $customerAccountManagement;
+        $this->mpHelper = $mpHelper;
+        $this->resultRedirectFactory = $context->getResultRedirectFactory();
+    }
+
+    public function aroundExecute(\Magento\Customer\Controller\Account\LoginPost $loginPost, \Closure $proceed)
+    {
+        if ($loginPost->getRequest()->isPost()) {
+            $login = $loginPost->getRequest()->getPost('login');
+            if (!empty($login['username']) && !empty($login['password'])) {
+                try {
+                    $customer = $this->getCustomer($login['username']);
+
+                    if ($this->isAVendorAndAccountNotApproved($customer)) {
+                        return $proceed();
+                        $resultRedirect = $this->resultRedirectFactory->create();
+                        $resultRedirect->setPath('customer/account');
+                        return $resultRedirect;
+                    } else {
+                        $this->messageManager->addErrorMessage(__('You are not a seller, Please login as normal user.'));
+                        $resultRedirect = $this->resultRedirectFactory->create();
+                        $resultRedirect->setPath('customer/account/login');
+                        return $resultRedirect;
+                    }
+
+                } catch (\Exception $e) {
+                    $message = "Invalid User credentials.";
+                    $this->messageManager->addError($message);
+                    $this->session->setUsername($login['username']);
+                    $this->responseHttp->setRedirect('customer/account/login');
+                }
+            } else {
+                // call the original execute function
+                return $proceed();
+            }
+        } else {
+            // call the original execute function
+            return $proceed();
+        }
+    }
+
+    /**
+     * @param $email
+     * @return \Magento\Customer\Api\Data\CustomerInterface
+     */
+    public function getCustomer($email)
+    {
+        $this->currentCustomer = $this->customerRepositoryInterface->get($email);
+        return $this->currentCustomer;
+    }
+    /**
+     * Check if customer is a vendor and account is approved
+     * @return bool
+     */
+    public function isAVendorAndAccountNotApproved($customer)
+    {
+        $sellerStatus = 0;
+        $sellerId = $customer->getId();
+        $model = $this->mpHelper->getSellerCollectionObj($sellerId);
+        foreach ($model as $value) {
+            if ($value->getIsSeller() == 1) {
+                $sellerStatus = $value->getIsSeller();
+            }
+        }
+
+        if ($sellerStatus == 1) {
+            return true;
+        }
+        return false;
+    }
+}

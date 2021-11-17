@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Customer\Block\Form\Login" name="seller_form_login" template="Webepower_SellerRegistration::sellerlogin.phtml">
+                <container name="form.additional.info" as="form_additional_info"/>
+                <container name="form.additional.buttons" label="Form Additional Buttons"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

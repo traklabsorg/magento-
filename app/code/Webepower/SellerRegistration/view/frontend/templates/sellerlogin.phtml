@@ -1,0 +1,40 @@
+<div class="login-container">
+    <div class="row">
+        <div class="block block-customer-login col-md-6 mx-auto mb-4 w-100">
+            <div class="block-title">
+                <strong id="block-customer-login-heading" role="heading" aria-level="2"><?= $block->escapeHtml(__('Seller Login')) ?></strong>
+            </div>
+            <div class="block-content" aria-labelledby="block-customer-login-heading">
+                <form method="post" action="<?= /* @noEscape */ $block->getUrl('customer/account/loginPost'); ?>" id="wk-supplier-login-form" enctype="multipart/form-data" data-mage-init='{"validation":{}}'>
+                    <fieldset class="fieldset login" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
+                        <input type="hidden" name="supplier_login" value="1">
+                        <?= /* @noEscape */ $block->getBlockHtml('formkey') ?>
+                        <div class="field required">
+                            <label class="label" for="supplier-email"><span><?= /* @noEscape */ __("Email Address"); ?></span></label>
+                            <div class="control">
+                                <input type="email" data-validate="{required:true, 'validate-email':true}" class="input-text required-entry" title="<?= /* @noEscape */ __("Email Address"); ?>" id="supplier-email" name="login[username]">
+                            </div>
+                        </div>
+                        <div class="field email required">
+                            <label for="supplier-password" class="label"><span><?= /* @noEscape */ __("Password"); ?></span></label>
+                            <div class="control">
+                                <input type="password" data-validate="{required:true}" title="<?= /* @noEscape */ __("Password"); ?>" class="input-text required-entry" id="supplier-password" name="login[password]">
+                            </div>
+                        </div>
+                        <div class="actions-toolbar">
+                            <div class="primary"><button type="submit" class="action login primary btn-v-dark py-3 text-md w-100" name="send" id="send2"><span><?= $block->escapeHtml(__('Sign In')) ?></span></button></div>
+                            <div class="secondary">
+                                <a href="/sellerregistration/index/index" class="action create primary btn-v-dark py-3 text-md w-100"><span><?= $block->escapeHtml(__("Don't have account? Click here to register as Supplier")) ?></span></a>
+                            </div>
+                            <style>
+                                .customer-account-login .action.create {
+                                    display: none;
+                                }
+                            </style>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
